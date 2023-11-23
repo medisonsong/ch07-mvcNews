@@ -156,21 +156,33 @@ public class NewsDAO {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		String sql = null;
+		String sub_sql = ""; // 상황에 따라 동적으로 처리하기 위해 sql과 분리해서 sub를 만듦	
+		int cnt = 0;
 		
 		try {
+			//커넥션풀로부터 커넥션 할당
 			conn = DBUtil.getConnection();
-			sql = "UPDATE dailynews SET title=?,writer=?,passwd=?,email=?,article=?,"
-					+ "filename=? WHERE num=?";
+			
+			if(vo.getFilename()!=null) { //파일이 업로드 된 경우
+				sub_sql += ",filename=?";
+			}
+			
+			sql = "UPDATE dailynews SET title=?, writer=?, email=?, article=?"
+					+ sub_sql + " WHERE num=?";
+			//PreparedStatement 객체 생성
 			pstmt = conn.prepareStatement(sql);
 			
-			pstmt.setString(1, vo.getTitle());
-			pstmt.setString(2, vo.getWriter());
-			pstmt.setString(3, vo.getPasswd());
-			pstmt.setString(4, vo.getEmail());
-			pstmt.setString(5, vo.getArticle());
-			pstmt.setString(6, vo.getFilename());
-			pstmt.setInt(7, vo.getNum());
+			//?에 데이터 바인딩 (물음표 번호가 달라지기 때문에 cnt로 자동으로 일치시켜줌)
+			pstmt.setString(++cnt, vo.getTitle());
+			pstmt.setString(++cnt, vo.getWriter());
+			pstmt.setString(++cnt, vo.getEmail());
+			pstmt.setString(++cnt, vo.getArticle());
 			
+			if(vo.getFilename()!=null) {
+				pstmt.setString(++cnt, vo.getFilename());
+			}
+			pstmt.setInt(++cnt, vo.getNum());
+			//SQL문 실행
 			pstmt.executeUpdate();
 		}catch(Exception e) {
 			throw new Exception(e);

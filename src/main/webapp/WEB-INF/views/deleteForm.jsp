@@ -23,7 +23,7 @@ window.onload=function(){
 </head>
 <body>
 <div class="page-main">
-	<h2>기사 삭제</h2>
+	<h2>뉴스 삭제</h2>
 	<form id="delete_form" action="delete.do" method="post">
 		<input type="hidden" name="num" value="${num}">
 		<ul>
